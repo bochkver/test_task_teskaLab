@@ -1,0 +1,1 @@
+DROP DATABASE containers_db;

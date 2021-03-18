@@ -1,6 +1,6 @@
 import json
 import datetime
-
+import mysql.connector
 
 class Container:
     def __init__(self, name, cpu, memory_usage, created_at, status, ip_addresses):
@@ -56,8 +56,27 @@ if __name__ == "__main__":
     with open('sample-data.json') as f:
         data = json.load(f)
     containers = list(map(Container.from_json, data))
-    for container in containers:
-        print(container.name, container.status)
-    # print(containers)
 
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="qwerty",
+        database="containers_db"
+    )
+    mycursor = mydb.cursor()
+
+    for container in containers:
+        sql = f"INSERT INTO containers_info (name, created_at, status, cpu, memory_usage) VALUES ("\
+              f"'{container.name}',"\
+              f"{container.created_at}," \
+              f"'{container.status}',"\
+              f"{'NULL' if container.cpu is None else container.cpu},"\
+              f"{'NULL' if container.memory_usage is None else container.memory_usage})"
+        mycursor.execute(sql)
+        id = mycursor.lastrowid
+        if container.ip_addresses is not None:
+            for address in container.ip_addresses:
+                sql = f"INSERT INTO containers_addresses (container_id, address) VALUES ({id}, '{address}')"
+                mycursor.execute(sql)
+    mydb.commit()
 
