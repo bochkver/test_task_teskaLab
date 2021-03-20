@@ -58,7 +58,7 @@ if __name__ == "__main__":
     containers = list(map(Container.from_json, data))
 
     mydb = mysql.connector.connect(
-        host="localhost",
+        host="mysql",
         user="root",
         password="qwerty",
         database="containers_db"
