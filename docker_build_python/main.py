@@ -1,6 +1,7 @@
 import json
 import datetime
 import mysql.connector
+import sys
 
 class Container:
     def __init__(self, name, cpu, memory_usage, created_at, status, ip_addresses):
@@ -20,7 +21,7 @@ class Container:
         return cls(name, cpu, memory_usage, created_at, status, addresses)
 
     @staticmethod
-    def convert_to_utc_timestamp (time):
+    def convert_to_utc_timestamp(time):
         time_object = datetime.datetime.fromisoformat(time)
         utc_timestamp = time_object.timestamp()
         return utc_timestamp
@@ -53,7 +54,8 @@ class Container:
 
 
 if __name__ == "__main__":
-    with open('sample-data.json') as f:
+    file_name = sys.argv[1]
+    with open(file_name) as f:
         data = json.load(f)
     containers = list(map(Container.from_json, data))
 
